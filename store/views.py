@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 
+app_name = 'invetory'
+
 def home(request):
     return render(
         request, 

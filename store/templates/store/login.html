@@ -28,8 +28,8 @@
                                     <input type="password" class="form-control" id="password" required>
                                 </div>
                                 <div class="d-grid gap-2">
-                                    <button type="submit" class="btn btn-primary">Entrar</button>
-                                    <a href="cadastro.html" class="btn btn-outline-secondary">Criar Conta</a>
+                                    <a href="{% url 'home' %}" class="btn btn-primary">Entrar</a>
+                                    <a href="{% url 'register' %}" class="btn btn-outline-secondary">Criar Conta</a>
                                 </div>
                             </form>
                         </div>

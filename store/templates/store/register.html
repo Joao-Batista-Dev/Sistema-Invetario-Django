@@ -44,8 +44,8 @@
                                     <input type="text" class="form-control" id="departamento" required>
                                 </div>
                                 <div class="d-grid gap-2">
-                                    <button type="submit" class="btn btn-primary">Cadastrar</button>
-                                    <a href="index.html" class="btn btn-outline-secondary">Voltar para Login</a>
+                                    <a href="{% url 'home' %}" type="submit" class="btn btn-primary">Cadastrar</a>
+                                    <a href="{% url 'login' %}" class="btn btn-outline-secondary">Voltar para Login</a>
                                 </div>
                             </form>
                         </div>
