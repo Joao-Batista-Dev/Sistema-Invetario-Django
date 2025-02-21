@@ -1,0 +1,243 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Inventário - Status de Equipamentos</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <link rel="stylesheet" href="{% static 'store/css/styles.css' %}">
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            {% include "store/partials/sidebar.html" %}
+
+            <!-- Main Content -->
+            <div class="col-md-9 col-lg-10 main-content">
+                <h2 class="mb-4">Status dos Equipamentos</h2>
+
+                <!-- Cards de Resumo -->
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="card bg-success text-white">
+                            <div class="card-body">
+                                <h6 class="card-title">Em Operação</h6>
+                                <h2 class="mb-0">45</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card bg-warning">
+                            <div class="card-body">
+                                <h6 class="card-title">Em Manutenção</h6>
+                                <h2 class="mb-0">8</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card bg-danger text-white">
+                            <div class="card-body">
+                                <h6 class="card-title">Inoperantes</h6>
+                                <h2 class="mb-0">3</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card bg-info text-white">
+                            <div class="card-body">
+                                <h6 class="card-title">Em Empréstimo</h6>
+                                <h2 class="mb-0">12</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filtros -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <label class="form-label">Categoria</label>
+                                <select class="form-select">
+                                    <option value="">Todas</option>
+                                    <option>Notebooks</option>
+                                    <option>Impressoras</option>
+                                    <option>Monitores</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Status</label>
+                                <select class="form-select">
+                                    <option value="">Todos</option>
+                                    <option>Em Operação</option>
+                                    <option>Em Manutenção</option>
+                                    <option>Inoperante</option>
+                                    <option>Em Empréstimo</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Departamento</label>
+                                <select class="form-select">
+                                    <option value="">Todos</option>
+                                    <option>TI</option>
+                                    <option>RH</option>
+                                    <option>Financeiro</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">&nbsp;</label>
+                                <button class="btn btn-primary d-block w-100">Filtrar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabela de Equipamentos -->
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Código</th>
+                                        <th>Equipamento</th>
+                                        <th>Categoria</th>
+                                        <th>Departamento</th>
+                                        <th>Status</th>
+                                        <th>Última Atualização</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>EQ001</td>
+                                        <td>Notebook Dell XPS</td>
+                                        <td>Notebooks</td>
+                                        <td>TI</td>
+                                        <td>
+                                            <span class="status-indicator bg-success"></span>
+                                            Em Operação
+                                        </td>
+                                        <td>01/02/2025</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#modalDetalhes">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>EQ002</td>
+                                        <td>Impressora HP LaserJet</td>
+                                        <td>Impressoras</td>
+                                        <td>RH</td>
+                                        <td>
+                                            <span class="status-indicator bg-warning"></span>
+                                            Em Manutenção
+                                        </td>
+                                        <td>02/02/2025</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#modalDetalhes">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Detalhes -->
+    <div class="modal fade" id="modalDetalhes" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Detalhes do Equipamento</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Informações Gerais</h6>
+                            <dl class="row">
+                                <dt class="col-sm-4">Código</dt>
+                                <dd class="col-sm-8">EQ001</dd>
+
+                                <dt class="col-sm-4">Equipamento</dt>
+                                <dd class="col-sm-8">Notebook Dell XPS</dd>
+
+                                <dt class="col-sm-4">Categoria</dt>
+                                <dd class="col-sm-8">Notebooks</dd>
+
+                                <dt class="col-sm-4">Status</dt>
+                                <dd class="col-sm-8">
+                                    <span class="status-indicator bg-success"></span>
+                                    Em Operação
+                                </dd>
+                            </dl>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Detalhes Técnicos</h6>
+                            <dl class="row">
+                                <dt class="col-sm-4">Modelo</dt>
+                                <dd class="col-sm-8">XPS 13 9310</dd>
+
+                                <dt class="col-sm-4">Nº Série</dt>
+                                <dd class="col-sm-8">XPS123456</dd>
+
+                                <dt class="col-sm-4">Data Aquisição</dt>
+                                <dd class="col-sm-8">15/01/2024</dd>
+
+                                <dt class="col-sm-4">Garantia</dt>
+                                <dd class="col-sm-8">Até 15/01/2026</dd>
+                            </dl>
+                        </div>
+                    </div>
+                    
+                    <hr>
+
+                    <h6>Histórico de Status</h6>
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Data</th>
+                                    <th>Status</th>
+                                    <th>Responsável</th>
+                                    <th>Observação</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>01/02/2025</td>
+                                    <td>Em Operação</td>
+                                    <td>João Silva</td>
+                                    <td>Retorno da manutenção preventiva</td>
+                                </tr>
+                                <tr>
+                                    <td>25/01/2025</td>
+                                    <td>Em Manutenção</td>
+                                    <td>Maria Santos</td>
+                                    <td>Manutenção preventiva programada</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

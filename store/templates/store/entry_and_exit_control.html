@@ -1,0 +1,263 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Inventário - Controle de Entrada e Saída</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <link rel="stylesheet" href="{% static 'store/css/styles.css' %}">
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            {% include "store/partials/sidebar.html" %}
+
+            <!-- Main Content -->
+            <div class="col-md-9 col-lg-10 main-content">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2>Controle de Entrada e Saída</h2>
+                    <div>
+                        <button class="btn btn-success me-2" data-bs-toggle="modal" data-bs-target="#modalEntrada">
+                            <i class="fas fa-sign-in-alt me-2"></i>Registrar Entrada
+                        </button>
+                        <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#modalSaida">
+                            <i class="fas fa-sign-out-alt me-2"></i>Registrar Saída
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Filtros -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <label class="form-label">Data Inicial</label>
+                                <input type="date" class="form-control">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Data Final</label>
+                                <input type="date" class="form-control">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Tipo</label>
+                                <select class="form-select">
+                                    <option value="">Todos</option>
+                                    <option>Entrada</option>
+                                    <option>Saída</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">&nbsp;</label>
+                                <button class="btn btn-primary d-block w-100">Filtrar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lista de Movimentações -->
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Data/Hora</th>
+                                        <th>Tipo</th>
+                                        <th>Equipamento</th>
+                                        <th>Responsável</th>
+                                        <th>Setor</th>
+                                        <th>Status</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>01/02/2025 09:30</td>
+                                        <td><span class="badge bg-success">Entrada</span></td>
+                                        <td>Notebook Dell XPS</td>
+                                        <td>João Silva</td>
+                                        <td>TI</td>
+                                        <td>Recebido</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#modalDetalhes">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>01/02/2025 14:15</td>
+                                        <td><span class="badge bg-warning text-dark">Saída</span></td>
+                                        <td>Monitor LG 27"</td>
+                                        <td>Maria Santos</td>
+                                        <td>Marketing</td>
+                                        <td>Em uso</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#modalDetalhes">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Entrada -->
+    <div class="modal fade" id="modalEntrada" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Registrar Entrada de Equipamento</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Equipamento</label>
+                                <select class="form-select" required>
+                                    <option value="">Selecione...</option>
+                                    <option>Notebook Dell XPS</option>
+                                    <option>Monitor LG 27"</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Data/Hora</label>
+                                <input type="datetime-local" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Responsável</label>
+                                <input type="text" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Setor</label>
+                                <input type="text" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Motivo da Entrada</label>
+                            <textarea class="form-control" rows="3" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Estado do Equipamento</label>
+                            <select class="form-select" required>
+                                <option value="">Selecione...</option>
+                                <option>Perfeito Estado</option>
+                                <option>Necessita Manutenção</option>
+                                <option>Danificado</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-success">Registrar Entrada</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Saída -->
+    <div class="modal fade" id="modalSaida" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Registrar Saída de Equipamento</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Equipamento</label>
+                                <select class="form-select" required>
+                                    <option value="">Selecione...</option>
+                                    <option>Notebook Dell XPS</option>
+                                    <option>Monitor LG 27"</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Data/Hora</label>
+                                <input type="datetime-local" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Responsável</label>
+                                <input type="text" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Setor Destino</label>
+                                <input type="text" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Finalidade</label>
+                            <textarea class="form-control" rows="3" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Previsão de Retorno</label>
+                            <input type="date" class="form-control">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-warning">Registrar Saída</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Detalhes -->
+    <div class="modal fade" id="modalDetalhes" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Detalhes da Movimentação</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <dl class="row">
+                        <dt class="col-sm-4">Data/Hora</dt>
+                        <dd class="col-sm-8">01/02/2025 09:30</dd>
+
+                        <dt class="col-sm-4">Tipo</dt>
+                        <dd class="col-sm-8"><span class="badge bg-success">Entrada</span></dd>
+
+                        <dt class="col-sm-4">Equipamento</dt>
+                        <dd class="col-sm-8">Notebook Dell XPS</dd>
+
+                        <dt class="col-sm-4">Responsável</dt>
+                        <dd class="col-sm-8">João Silva</dd>
+
+                        <dt class="col-sm-4">Setor</dt>
+                        <dd class="col-sm-8">TI</dd>
+
+                        <dt class="col-sm-4">Motivo</dt>
+                        <dd class="col-sm-8">Retorno após manutenção preventiva</dd>
+
+                        <dt class="col-sm-4">Estado</dt>
+                        <dd class="col-sm-8">Perfeito Estado</dd>
+                    </dl>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
