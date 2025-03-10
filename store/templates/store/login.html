@@ -18,6 +18,11 @@
                     <div class="card">
                         <div class="card-body p-4">
                             <h3 class="text-center mb-4">Login</h3>
+
+                            {% if error_message %}
+                                <div class="alert alert-danger">{{ error_message }}</div>
+                            {% endif %}
+
                             <form action="{% url 'login' %}" method="POST">
                                 {% csrf_token %}
                                 <div class="mb-3">

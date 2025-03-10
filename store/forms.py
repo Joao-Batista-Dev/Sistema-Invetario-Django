@@ -2,20 +2,31 @@ from django import forms
 from .models import RegisterUser
 
 class RegisterUserForm(forms.ModelForm):
-    password = forms.CharField(widget=forms.PasswordInput)
+    password = forms.CharField(
+        widget=forms.PasswordInput(
+            attrs={'class': 'form-control'}
+        ),
+        label="Senha"
+    )
 
     class Meta:
         model = RegisterUser
         fields = [
-            'fullname',
-            'email',
+            'fullname', 
+            'email', 
             'password'
         ]
 
-    def clear_email(self):
-        email = self.cleaned_data.get('email')
-
-        if RegisterUser.objects.filter(email=email).exists():
-            raise forms.ValidationError("Este e-mail já está cadastrado.")
-        else:
-            return email
+class LoginForm(forms.Form):
+    email = forms.EmailField(
+        label="Email",
+        widget=forms.EmailInput(
+            attrs={'class': 'form-control'}
+        )
+    )
+    password = forms.CharField(
+        label="Senha",
+        widget=forms.PasswordInput(
+            attrs={'class': 'form-control'}
+        )     
+    )
