@@ -28,8 +28,8 @@ class Category(models.Model):
 class RegisterUser(models.Model):
     fullname = models.CharField(max_length=200, blank=False, null=False, verbose_name='Nome Completo',)
     email = models.EmailField(unique=True,blank=False, null=False, verbose_name='Email')
-    password = models.CharField(max_length=100, verbose_name='Senha')
-    cpf = models.CharField(max_length=15, blank=False, null=False, verbose_name='CPF')
+    password = models.CharField(max_length=255, verbose_name='Senha')
+    
 
     class Meta:
         ordering = ['fullname']

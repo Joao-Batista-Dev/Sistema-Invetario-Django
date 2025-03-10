@@ -3,7 +3,7 @@ from .models import Brand, Category, RegisterProduct, RegisterUser, Movement, Ma
 
 @admin.register(RegisterUser)
 class RegisterUserAdmin(admin.ModelAdmin):
-    list_display = ('fullname', 'email', 'password', 'cpf',)
+    list_display = ('fullname', 'email', 'password',)
 
 @admin.register(Movement)
 class MovementAdmin(admin.ModelAdmin):

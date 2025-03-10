@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from .models import Brand, Category, RegisterUser, RegisterProduct, Movement, Maintenance, EquipmentStatus
-from django.contrib.auth import authenticate, login
+from .models import RegisterUser
+from .forms import RegisterUserForm
 
 def home(request):
     return render(
@@ -10,27 +10,21 @@ def home(request):
     )
 
 def register(request):
-    fullname = email = password = ""
-    context = {}
-
     if request.method == 'POST':
-        fullname = request.POST.get('fullname', '').strip()
-        email = request.POST.get('email', '').strip()
-        password = request.POST.get('password', '').strip()
-        
+        form = RegisterUserForm(request.POST)
 
-    if not (fullname and email and password):  
-        context['erro'] = 'Preencha todos os campos!'
-    elif RegisterUser.objects.filter(fullname=fullname, email=email).exists():
-        context['erro'] = 'Usuário já cadastrado!'
+        if form.is_valid():
+            form.save()
+            return redirect('login')
     else:
-        RegisterUser.objects.create(fullname=fullname, email=email, password=password)
-        context['sucesso'] = 'Usuário cadastrado com sucesso!'
+        form = RegisterUserForm()
 
     return render(
         request, 
         'store/register.html',
-        context
+        {
+            "form": form
+        }
     )
 
 def login(request):
