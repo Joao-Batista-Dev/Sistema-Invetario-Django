@@ -29,6 +29,5 @@ class CategoryAdmin(admin.ModelAdmin):
 
 @admin.register(RegisterProduct)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('title', 'brand', 'category', 'is_active', 'description', 'created_at', 'updated_at',)
-    search_fields = ('title', 'brand__name', 'category__name',)
-    list_filter = ('is_active', 'brand', 'category',)
+    list_display = ('name',)
+    

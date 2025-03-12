@@ -11,4 +11,6 @@ urlpatterns = [
     path('manutencao_equipamento/', views.equipment_maintenance, name='equipment_maintenance'),
     path('registro_equipamento/', views.equipment_registration, name='equipment_registration'),
     path('status_do_equipamento/', views.equipment_status, name='equipment_status'),
+    path('excluir_equipamento/<int:id>/', views.delete_equipment, name='delete_equipment'),
+    path('equipments/edit/<int:id>/', views.edit_equipment, name='edit_equipment'),
 ]

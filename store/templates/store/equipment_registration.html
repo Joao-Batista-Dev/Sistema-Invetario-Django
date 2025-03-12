@@ -42,22 +42,38 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    {% for equipments in equipment %}
                                     <tr>
-                                        <td>1</td>
-                                        <td>Notebook Dell XPS</td>
-                                        <td>Computador</td>
-                                        <td>XPS123456</td>
-                                        <td>01/01/2025</td>
-                                        <td><span class="badge bg-success">Ativo</span></td>
+                                        <td>{{ equipments.id }}</td>
+                                        <td>{{ equipments.name }}</td>
+                                        <td>{{ equipments.type }}</td>
+                                        <td>{{ equipments.serial_number }}</td>
+                                        <td>{{ equipments.date_aquisition }}</td>
+                                        <td>
+                                            {% if equipments.status_product == "Novo" %}
+                                                <span class="badge bg-success">Novo</span>
+                                            {% elif equipments.status_product == "Bom" %}
+                                                <span class="badge bg-primary">Bom</span>
+                                            {% elif equipments.status_product == "Regular" %}
+                                                <span class="badge bg-warning text-dark">Regular</span>
+                                            {% else %}
+                                                <span class="badge bg-danger">Ruim</span>
+                                            {% endif %}
+                                        </td>
                                         <td class="action-buttons">
-                                            <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modalEditar">
+                                            <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modalEditar{{ equipments.id }}">
                                                 <i class="fas fa-edit"></i>
                                             </button>
-                                            <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#modalExcluir">
+                                            <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#modalExcluir{{ equipments.id }}">
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </td>
                                     </tr>
+                                    {% empty %}
+                                    <tr>
+                                        <td colspan="7" class="text-center">Nenhum equipamento cadastrado.</td>
+                                    </tr>
+                                    {% endfor %}
                                     <!-- Mais linhas de exemplo -->
                                 </tbody>
                             </table>
@@ -69,124 +85,165 @@
     </div>
 
     <!-- Modal de Cadastro -->
-    <div class="modal fade" id="modalCadastro" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Novo Equipamento</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <form>
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label class="form-label">Nome do Equipamento</label>
-                                <input type="text" class="form-control" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Tipo</label>
-                                <select class="form-select" required>
-                                    <option value="">Selecione...</option>
-                                    <option>Computador</option>
-                                    <option>Móvel</option>
-                                    <option>Ferramenta</option>
-                                </select>
-                            </div>
+<div class="modal fade" id="modalCadastro" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Novo Equipamento</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Formulário de cadastro -->
+                <form method="POST" action="{% url 'equipment_registration' %}">
+                    {% csrf_token %}
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Nome do Equipamento</label>
+                            <input type="text" class="form-control" name="name" required>
                         </div>
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label class="form-label">Número de Série</label>
-                                <input type="text" class="form-control" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Data de Aquisição</label>
-                                <input type="date" class="form-control" required>
-                            </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Tipo</label>
+                            <select class="form-select" name="type" required>
+                                <option value="">Selecione...</option>
+                                <option value="Computador">Computador</option>
+                                <option value="Móvel">Móvel</option>
+                                <option value="Ferramenta">Ferramenta</option>
+                            </select>
                         </div>
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label class="form-label">Estado de Conservação</label>
-                                <select class="form-select" required>
-                                    <option value="">Selecione...</option>
-                                    <option>Novo</option>
-                                    <option>Bom</option>
-                                    <option>Regular</option>
-                                    <option>Ruim</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Fornecedor</label>
-                                <input type="text" class="form-control">
-                            </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Número de Série</label>
+                            <input type="text" class="form-control" name="serial_number" required>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">Observações</label>
-                            <textarea class="form-control" rows="3"></textarea>
+                        <div class="col-md-6">
+                            <label class="form-label">Data de Aquisição</label>
+                            <input type="date" class="form-control" name="date_aquisition" required>
                         </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-primary">Salvar</button>
-                </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Estado de Conservação</label>
+                            <select class="form-select" name="status_product" required>
+                                <option value="">Selecione...</option>
+                                <option value="Novo">Novo</option>
+                                <option value="Bom">Bom</option>
+                                <option value="Regular">Regular</option>
+                                <option value="Ruim">Ruim</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Fornecedor</label>
+                            <input type="text" class="form-control" name="supplier">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Observações</label>
+                        <textarea class="form-control" name="observations" rows="3"></textarea>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Salvar</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
+</div>
+
 
     <!-- Modal de Edição -->
-    <div class="modal fade" id="modalEditar" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Editar Equipamento</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <!-- Mesmo formulário do cadastro, mas com dados preenchidos -->
-                    <form>
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label class="form-label">Nome do Equipamento</label>
-                                <input type="text" class="form-control" value="Notebook Dell XPS" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Tipo</label>
-                                <select class="form-select" required>
-                                    <option>Computador</option>
-                                    <option>Móvel</option>
-                                    <option>Ferramenta</option>
-                                </select>
-                            </div>
+{% for equipments in equipment %}
+<div class="modal fade" id="modalEditar{{ equipments.id }}" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Editar Equipamento - {{ equipments.name }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Formulário de edição -->
+                <form method="POST" action="{% url 'equipment_registration' %}">
+                    {% csrf_token %}
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Nome do Equipamento</label>
+                            <input type="text" class="form-control" name="name" value="{{ equipments.name }}" required>
                         </div>
-                        <!-- Resto do formulário similar ao de cadastro -->
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-primary">Salvar Alterações</button>
-                </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Tipo</label>
+                            <select class="form-select" name="type" required>
+                                <option value="Computador" {% if equipments.type == 'Computador' %} selected {% endif %}>Computador</option>
+                                <option value="Móvel" {% if equipments.type == 'Móvel' %} selected {% endif %}>Móvel</option>
+                                <option value="Ferramenta" {% if equipments.type == 'Ferramenta' %} selected {% endif %}>Ferramenta</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Número de Série</label>
+                            <input type="text" class="form-control" name="serial_number" value="{{ equipments.serial_number }}" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Data de Aquisição</label>
+                            <input type="date" class="form-control" name="date_aquisition" value="{{ equipments.date_aquisition|date:'Y-m-d' }}" required>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Estado de Conservação</label>
+                            <select class="form-select" name="status_product" required>
+                                <option value="Novo" {% if equipments.status_product == 'Novo' %} selected {% endif %}>Novo</option>
+                                <option value="Bom" {% if equipments.status_product == 'Bom' %} selected {% endif %}>Bom</option>
+                                <option value="Regular" {% if equipments.status_product == 'Regular' %} selected {% endif %}>Regular</option>
+                                <option value="Ruim" {% if equipments.status_product == 'Ruim' %} selected {% endif %}>Ruim</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Fornecedor</label>
+                            <input type="text" class="form-control" name="supplier" value="{{ equipments.supplier }}">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Observações</label>
+                        <textarea class="form-control" name="observations" rows="3">{{ equipments.observations }}</textarea>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
+</div>
+{% endfor %}
+
 
     <!-- Modal de Exclusão -->
-    <div class="modal fade" id="modalExcluir" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Confirmar Exclusão</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <p>Tem certeza que deseja excluir este equipamento? Esta ação não pode ser desfeita.</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-danger">Confirmar Exclusão</button>
-                </div>
+{% for equipments in equipment %}
+<div class="modal fade" id="modalExcluir{{ equipments.id }}" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirmar Exclusão</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Tem certeza que deseja excluir o equipamento <strong>{{ equipments.name }}</strong>? Esta ação não pode ser desfeita.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <form method="POST" action="{% url 'delete_equipment' equipments.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Confirmar Exclusão</button>
+                </form>
             </div>
         </div>
     </div>
+</div>
+{% endfor %}
+
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 </body>
