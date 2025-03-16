@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
-from .models import RegisterUser, RegisterProduct
-from .forms import RegisterUserForm, LoginForm
+from django.contrib import messages
+from .models import RegisterUser, RegisterProduct, Movement
+from .forms import RegisterUserForm, LoginForm, MovementForm
 
 def home(request):
     return render(
@@ -69,12 +70,6 @@ def reports(request):
     return render(
         request,
         'store/reports.html',
-    )
-
-def entry_and_exit_control(request):
-    return render(
-        request,
-        'store/entry_and_exit_control.html'
     )
 
 def equipment_maintenance(request):
@@ -163,3 +158,53 @@ def equipment_status(request):
         'store/equipment_status.html'
     )
 
+def entry_and_exit_control(request):
+    if request.method == 'POST':
+        # Imprime todos os dados POST para verificar
+        print(request.POST)
+
+        # Obtém os dados do formulário
+        register_product_id = request.POST.get('register_product')
+        movement_type = request.POST.get('movement_type')
+        responsible = request.POST.get('responsible')
+        sector = request.POST.get('sector')
+        status = request.POST.get('status')
+        reason = request.POST.get('reason')
+        expected_return = request.POST.get('expected_return')
+
+        if not register_product_id:
+            messages.error(request, "Erro: ID do produto não enviado.")
+            return redirect('entry_and_exit_control')
+
+        try:
+            register_product = RegisterProduct.objects.get(id=register_product_id)
+        except RegisterProduct.DoesNotExist:
+            messages.error(request, "Erro: Produto não encontrado.")
+            return redirect('entry_and_exit_control')
+
+        if not movement_type:
+            messages.error(request, "Erro: Tipo de movimento não especificado.")
+            return redirect('entry_and_exit_control')
+
+        movement = Movement(
+            register_product=register_product,
+            movement_type=movement_type,
+            responsible=responsible,
+            sector=sector,
+            status=status,
+            reason=reason,
+            expected_return=expected_return,
+        )
+        movement.save()
+
+        messages.success(request, "Movimentação registrada com sucesso!")
+        return redirect('entry_and_exit_control')
+
+    movements = Movement.objects.all()
+    products = RegisterProduct.objects.all()
+
+    return render(
+        request,
+        'store/entry_and_exit_control.html',
+        {'movements': movements, 'products': products}
+    )

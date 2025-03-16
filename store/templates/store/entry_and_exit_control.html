@@ -33,30 +33,33 @@
                 <!-- Filtros -->
                 <div class="card mb-4">
                     <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-3">
-                                <label class="form-label">Data Inicial</label>
-                                <input type="date" class="form-control">
+                        <form method="GET" action="{% url 'entry_and_exit_control' %}">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <label class="form-label">Data Inicial</label>
+                                    <input type="date" class="form-control" name="start_date" value="{{ request.GET.start_date }}">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Data Final</label>
+                                    <input type="date" class="form-control" name="end_date" value="{{ request.GET.end_date }}">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Tipo</label>
+                                    <select class="form-select" name="movement_type">
+                                        <option value="">Todos</option>
+                                        <option value="entrada" {% if request.GET.movement_type == "entrada" %} selected {% endif %}>Entrada</option>
+                                        <option value="saida" {% if request.GET.movement_type == "saida" %} selected {% endif %}>Saída</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">&nbsp;</label>
+                                    <button class="btn btn-primary d-block w-100" type="submit">Filtrar</button>
+                                </div>
                             </div>
-                            <div class="col-md-3">
-                                <label class="form-label">Data Final</label>
-                                <input type="date" class="form-control">
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label">Tipo</label>
-                                <select class="form-select">
-                                    <option value="">Todos</option>
-                                    <option>Entrada</option>
-                                    <option>Saída</option>
-                                </select>
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label">&nbsp;</label>
-                                <button class="btn btn-primary d-block w-100">Filtrar</button>
-                            </div>
-                        </div>
+                        </form>
                     </div>
                 </div>
+
 
                 <!-- Lista de Movimentações -->
                 <div class="card">
@@ -75,32 +78,27 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    {% for movement in movements %}
                                     <tr>
-                                        <td>01/02/2025 09:30</td>
-                                        <td><span class="badge bg-success">Entrada</span></td>
-                                        <td>Notebook Dell XPS</td>
-                                        <td>João Silva</td>
-                                        <td>TI</td>
-                                        <td>Recebido</td>
+                                        <td>{{ movement.date_time|date:"d/m/Y H:i" }}</td>
                                         <td>
-                                            <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#modalDetalhes">
+                                            {% if movement.movement_type == 'entrada' %}
+                                                <span class="badge bg-success">Entrada</span>
+                                            {% else %}
+                                                <span class="badge bg-warning text-dark">Saída</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ movement.register_product.name }}</td>
+                                        <td>{{ movement.responsible }}</td>
+                                        <td>{{ movement.sector }}</td>
+                                        <td>{{ movement.status }}</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#modalDetalhes" data-id="{{ movement.id }}">
                                                 <i class="fas fa-eye"></i>
                                             </button>
                                         </td>
                                     </tr>
-                                    <tr>
-                                        <td>01/02/2025 14:15</td>
-                                        <td><span class="badge bg-warning text-dark">Saída</span></td>
-                                        <td>Monitor LG 27"</td>
-                                        <td>Maria Santos</td>
-                                        <td>Marketing</td>
-                                        <td>Em uso</td>
-                                        <td>
-                                            <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#modalDetalhes">
-                                                <i class="fas fa-eye"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
+                                    {% endfor %}
                                 </tbody>
                             </table>
                         </div>
@@ -119,53 +117,58 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <form>
+                    <form method="POST" action="{% url 'entry_and_exit_control' %}">
+                        {% csrf_token %}
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label class="form-label">Equipamento</label>
-                                <select class="form-select" required>
+                                <select class="form-select" name="register_product" required>
                                     <option value="">Selecione...</option>
-                                    <option>Notebook Dell XPS</option>
-                                    <option>Monitor LG 27"</option>
+                                    {% for product in products %}
+                                        <option value="{{ product.id }}">{{ product.name }}</option>
+                                    {% empty %}
+                                        <option value="">Nenhum equipamento disponível</option>
+                                    {% endfor %}
                                 </select>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Data/Hora</label>
-                                <input type="datetime-local" class="form-control" required>
+                                <input type="datetime-local" class="form-control" name="date_time" required>
                             </div>
                         </div>
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label class="form-label">Responsável</label>
-                                <input type="text" class="form-control" required>
+                                <input type="text" class="form-control" name="responsible" required>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Setor</label>
-                                <input type="text" class="form-control" required>
+                                <input type="text" class="form-control" name="sector" required>
                             </div>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Motivo da Entrada</label>
-                            <textarea class="form-control" rows="3" required></textarea>
+                            <textarea class="form-control" name="reason" rows="3" required></textarea>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Estado do Equipamento</label>
-                            <select class="form-select" required>
+                            <select class="form-select" name="status" required>
                                 <option value="">Selecione...</option>
-                                <option>Perfeito Estado</option>
-                                <option>Necessita Manutenção</option>
-                                <option>Danificado</option>
+                                <option value="Perfeito Estado">Perfeito Estado</option>
+                                <option value="Necessita Manutenção">Necessita Manutenção</option>
+                                <option value="Danificado">Danificado</option>
                             </select>
                         </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-success">Registrar Entrada</button>
+                        </div>
                     </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-success">Registrar Entrada</button>
                 </div>
             </div>
         </div>
     </div>
+
 
     <!-- Modal de Saída -->
     <div class="modal fade" id="modalSaida" tabindex="-1">
@@ -176,52 +179,59 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <form>
+                    <form method="POST" action="{% url 'entry_and_exit_control' %}">
+                        {% csrf_token %}
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label class="form-label">Equipamento</label>
-                                <select class="form-select" required>
+                                <select class="form-select" name="register_product" required>
                                     <option value="">Selecione...</option>
-                                    <option>Notebook Dell XPS</option>
-                                    <option>Monitor LG 27"</option>
+                                    {% for product in products %}
+                                        <option value="{{ product.id }}">{{ product.name }}</option>
+                                    {% empty %}
+                                        <option value="">Nenhum equipamento disponível</option>
+                                    {% endfor %}
                                 </select>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Data/Hora</label>
-                                <input type="datetime-local" class="form-control" required>
+                                <input type="datetime-local" class="form-control" name="date_time" required>
                             </div>
                         </div>
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label class="form-label">Responsável</label>
-                                <input type="text" class="form-control" required>
+                                <input type="text" class="form-control" name="responsible" required>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Setor Destino</label>
-                                <input type="text" class="form-control" required>
+                                <input type="text" class="form-control" name="sector" required>
                             </div>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Finalidade</label>
-                            <textarea class="form-control" rows="3" required></textarea>
+                            <textarea class="form-control" name="purpose" rows="3" required></textarea>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Previsão de Retorno</label>
-                            <input type="date" class="form-control">
+                            <input type="date" class="form-control" name="expected_return">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-warning">Registrar Saída</button>
                         </div>
                     </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-warning">Registrar Saída</button>
                 </div>
             </div>
         </div>
     </div>
 
+
+
     <!-- Modal de Detalhes -->
     <div class="modal fade" id="modalDetalhes" tabindex="-1">
         <div class="modal-dialog">
+            {% for movement in movements %}
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Detalhes da Movimentação</h5>
@@ -230,31 +240,38 @@
                 <div class="modal-body">
                     <dl class="row">
                         <dt class="col-sm-4">Data/Hora</dt>
-                        <dd class="col-sm-8">01/02/2025 09:30</dd>
+                        <dd class="col-sm-8">{{ movement.date_time|date:"d/m/Y H:i" }}</dd>
 
                         <dt class="col-sm-4">Tipo</dt>
-                        <dd class="col-sm-8"><span class="badge bg-success">Entrada</span></dd>
+                        <dd class="col-sm-8">
+                            {% if movement.movement_type == 'entrada' %}
+                                <span class="badge bg-success">Entrada</span>
+                            {% else %}
+                                <span class="badge bg-warning text-dark">Saída</span>
+                            {% endif %}
+                        </dd>
 
                         <dt class="col-sm-4">Equipamento</dt>
-                        <dd class="col-sm-8">Notebook Dell XPS</dd>
+                        <dd class="col-sm-8">{{ movement.register_product.name }}</dd>
 
                         <dt class="col-sm-4">Responsável</dt>
-                        <dd class="col-sm-8">João Silva</dd>
+                        <dd class="col-sm-8">{{ movement.responsible }}</dd>
 
                         <dt class="col-sm-4">Setor</dt>
-                        <dd class="col-sm-8">TI</dd>
+                        <dd class="col-sm-8">{{ movement.sector }}</dd>
 
                         <dt class="col-sm-4">Motivo</dt>
-                        <dd class="col-sm-8">Retorno após manutenção preventiva</dd>
+                        <dd class="col-sm-8">{{ movement.entry_reason }}</dd>
 
                         <dt class="col-sm-4">Estado</dt>
-                        <dd class="col-sm-8">Perfeito Estado</dd>
+                        <dd class="col-sm-8">{{ movement.equipment_condition }}</dd>
                     </dl>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
                 </div>
             </div>
+            {% endfor %}
         </div>
     </div>
 

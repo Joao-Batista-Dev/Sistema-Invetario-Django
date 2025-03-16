@@ -1,5 +1,5 @@
 from django import forms
-from .models import RegisterUser
+from .models import RegisterUser, Movement
 
 class RegisterUserForm(forms.ModelForm):
     password = forms.CharField(
@@ -31,6 +31,18 @@ class LoginForm(forms.Form):
         )     
     )
 
+class MovementForm(forms.ModelForm):
+    class Meta:
+        model = Movement
+        fields = [
+            'register_product', 
+            'movement_type', 
+            'responsible', 
+            'sector', 
+            'status', 
+            'reason', 
+            'expected_return',
+        ]
 
 
 

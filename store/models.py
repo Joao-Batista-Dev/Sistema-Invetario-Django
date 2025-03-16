@@ -24,7 +24,6 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
-    
 
 class RegisterUser(models.Model):
     fullname = models.CharField(max_length=200, blank=False, null=False, verbose_name='Nome Completo')
@@ -45,6 +44,7 @@ class RegisterProduct(models.Model):
         ('Móvel', 'Móvel'),
         ('Ferramenta', 'Ferramenta'),
     ], default='Computador')  # Valor padrão adicionado
+
     serial_number = models.CharField(max_length=9,)
     date_aquisition = models.DateTimeField(default=timezone.now)
     status_product = models.CharField(max_length=20, choices=[
@@ -53,6 +53,7 @@ class RegisterProduct(models.Model):
         ('Regular', 'Regular'),
         ('Ruim', 'Ruim'),
     ], default='Novo')
+    
     supplier = models.CharField(max_length=255, blank=True, null=True)
     observations = models.TextField(blank=True, null=True)
 
@@ -64,25 +65,23 @@ class RegisterProduct(models.Model):
         return self.name
 
 class Movement(models.Model):
-    MOVEMENT_TYPE = [
-        ('entry', 'Entrada'),
-        ('exit', 'Saída')
+    MOVEMENT_TYPE_CHOICES = [
+        ('entrada', 'Entrada'),
+        ('saida', 'Saída'),
     ]
-
-    product = models.ForeignKey(RegisterProduct, on_delete=models.CASCADE, verbose_name='Produto')
-    movement_type = models.CharField(max_length=10, choices=MOVEMENT_TYPE, verbose_name='Entrada Tipo')
-    quantity = models.PositiveIntegerField(verbose_name='Quantidade',)
-    date = models.DateTimeField(auto_now_add=True, verbose_name='Criado em')
-    responsible_person = models.CharField(max_length=255, verbose_name='Colaborador')
-
-    class Meta:
-        ordering = ['product']
-        verbose_name = 'Entrada e Saida'
+    
+    register_product = models.ForeignKey(RegisterProduct, on_delete=models.CASCADE, null=True, blank=True)
+    movement_type = models.CharField(max_length=10, choices=MOVEMENT_TYPE_CHOICES)
+    date_time = models.DateTimeField(default=timezone.now)
+    responsible = models.CharField(max_length=100, default="Não especificado")
+    sector = models.CharField(max_length=100, default="Não especificado")
+    status = models.CharField(max_length=50, default="Pendente")
+    reason = models.TextField(blank=True, null=True)
+    expected_return = models.DateField(blank=True, null=True)
 
     def __str__(self):
-        return f"{self.get_movement_type_display()} - {self.product.name} ({self.quantity})"
-
-
+        return f"{self.movement_type} - {self.register_product.name} - {self.date_time}"
+    
 class Maintenance(models.Model):
     product = models.ForeignKey(RegisterProduct, on_delete=models.CASCADE, verbose_name='Produto')
     maintenance_date = models.DateField(verbose_name='Data da Manuteção')

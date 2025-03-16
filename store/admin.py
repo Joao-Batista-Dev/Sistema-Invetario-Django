@@ -7,7 +7,7 @@ class RegisterUserAdmin(admin.ModelAdmin):
 
 @admin.register(Movement)
 class MovementAdmin(admin.ModelAdmin):
-    list_display = ('product', 'movement_type', 'quantity', 'date', 'responsible_person',)
+    list_display = ('register_product', 'movement_type', 'date_time', 'responsible', 'sector', 'status')
 
 @admin.register(Maintenance)
 class MaintenanceAdmin(admin.ModelAdmin):
