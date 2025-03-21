@@ -33,12 +33,9 @@
                                 <thead>
                                     <tr>
                                         <th>ID</th>
-                                        <th>Nome</th>
-                                        <th>Tipo</th>
+                                        <th>Nome - Equipamento</th>
                                         <th>Número de Série</th>
-                                        <th>Data Aquisição</th>
-                                        <th>Estado</th>
-                                        <th>Ações</th>
+                                        <th>Data - Entrada</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -46,20 +43,8 @@
                                     <tr>
                                         <td>{{ equipments.id }}</td>
                                         <td>{{ equipments.name }}</td>
-                                        <td>{{ equipments.type }}</td>
                                         <td>{{ equipments.serial_number }}</td>
                                         <td>{{ equipments.date_aquisition }}</td>
-                                        <td>
-                                            {% if equipments.status_product == "Novo" %}
-                                                <span class="badge bg-success">Novo</span>
-                                            {% elif equipments.status_product == "Bom" %}
-                                                <span class="badge bg-primary">Bom</span>
-                                            {% elif equipments.status_product == "Regular" %}
-                                                <span class="badge bg-warning text-dark">Regular</span>
-                                            {% else %}
-                                                <span class="badge bg-danger">Ruim</span>
-                                            {% endif %}
-                                        </td>
                                         <td class="action-buttons">
                                             <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modalEditar{{ equipments.id }}">
                                                 <i class="fas fa-edit"></i>
@@ -102,39 +87,34 @@
                             <input type="text" class="form-control" name="name" required>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Tipo</label>
-                            <select class="form-select" name="type" required>
-                                <option value="">Selecione...</option>
-                                <option value="Computador">Computador</option>
-                                <option value="Móvel">Móvel</option>
-                                <option value="Ferramenta">Ferramenta</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-md-6">
                             <label class="form-label">Número de Série</label>
                             <input type="text" class="form-control" name="serial_number" maxlength="9" required>
                         </div>
+                    </div>
+                    <div class="row mb-3">
                         <div class="col-md-6">
-                            <label class="form-label">Data de Aquisição</label>
+                            <label class="form-label">Data - Inicial</label>
                             <input type="date" class="form-control" name="date_aquisition" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Data - Final</label>
+                            <input type="date" class="form-control" name="date_end" required>
                         </div>
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label class="form-label">Estado de Conservação</label>
-                            <select class="form-select" name="status_product" required>
-                                <option value="">Selecione...</option>
-                                <option value="Novo">Novo</option>
-                                <option value="Bom">Bom</option>
-                                <option value="Regular">Regular</option>
-                                <option value="Ruim">Ruim</option>
-                            </select>
+                            <label class="form-label">Locador</label>
+                            <input type="text" class="form-control" name="leased">
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Fornecedor</label>
-                            <input type="text" class="form-control" name="supplier">
+                            <label class="form-label">Alocador</label>
+                            <input type="text" class="form-control" name="allocator">
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Endereço</label>
+                            <input type="text" class="form-control" name="address">
                         </div>
                     </div>
                     <div class="mb-3">
@@ -171,37 +151,34 @@
                             <input type="text" class="form-control" name="name" value="{{ equipments.name }}" required>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Tipo</label>
-                            <select class="form-select" name="type" required>
-                                <option value="Computador" {% if equipments.type == 'Computador' %} selected {% endif %}>Computador</option>
-                                <option value="Móvel" {% if equipments.type == 'Móvel' %} selected {% endif %}>Móvel</option>
-                                <option value="Ferramenta" {% if equipments.type == 'Ferramenta' %} selected {% endif %}>Ferramenta</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-md-6">
                             <label class="form-label">Número de Série</label>
                             <input type="text" class="form-control" name="serial_number" value="{{ equipments.serial_number }}" required>
                         </div>
+                    </div>
+                    <div class="row mb-3">
                         <div class="col-md-6">
-                            <label class="form-label">Data de Aquisição</label>
+                            <label class="form-label">Data - Inicial</label>
                             <input type="date" class="form-control" name="date_aquisition" value="{{ equipments.date_aquisition|date:'Y-m-d' }}" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Data - Final</label>
+                            <input type="date" class="form-control" name="date_end" value="{{ equipments.date_end|date:'Y-m-d' }}" required>
                         </div>
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label class="form-label">Estado de Conservação</label>
-                            <select class="form-select" name="status_product" required>
-                                <option value="Novo" {% if equipments.status_product == 'Novo' %} selected {% endif %}>Novo</option>
-                                <option value="Bom" {% if equipments.status_product == 'Bom' %} selected {% endif %}>Bom</option>
-                                <option value="Regular" {% if equipments.status_product == 'Regular' %} selected {% endif %}>Regular</option>
-                                <option value="Ruim" {% if equipments.status_product == 'Ruim' %} selected {% endif %}>Ruim</option>
-                            </select>
+                            <label class="form-label">Locador</label>
+                            <input type="text" class="form-control" name="leased" value="{{ equipments.leased }}">
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Fornecedor</label>
-                            <input type="text" class="form-control" name="supplier" value="{{ equipments.supplier }}">
+                            <label class="form-label">Alocador</label>
+                            <input type="text" class="form-control" name="allocator" value="{{ equipments.allocator }}">
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Endereço</label>
+                            <input type="text" class="form-control" name="address" value="{{ equipments.address }}">
                         </div>
                     </div>
                     <div class="mb-3">
