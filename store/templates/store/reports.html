@@ -32,25 +32,25 @@
                                     <div class="col-md-3">
                                         <button class="btn btn-outline-primary w-100 mb-2">
                                             <i class="fas fa-file-alt me-2"></i>
-                                            Inventário Atual
+                                            Inventário Atual ({{ total_equipamentos }})
                                         </button>
                                     </div>
                                     <div class="col-md-3">
                                         <button class="btn btn-outline-primary w-100 mb-2">
                                             <i class="fas fa-tools me-2"></i>
-                                            Manutenções do Mês
+                                            Manutenções do Mês ({{ manutencoes_mes }})
                                         </button>
                                     </div>
                                     <div class="col-md-3">
                                         <button class="btn btn-outline-primary w-100 mb-2">
                                             <i class="fas fa-exclamation-triangle me-2"></i>
-                                            Equipamentos Críticos
+                                            Equipamentos Críticos ({{ equipamentos_criticos }})
                                         </button>
                                     </div>
                                     <div class="col-md-3">
                                         <button class="btn btn-outline-primary w-100 mb-2">
                                             <i class="fas fa-clock me-2"></i>
-                                            Movimentações Recentes
+                                            Movimentações Recentes ({{ movimentacoes_recentes }})
                                         </button>
                                     </div>
                                 </div>
@@ -65,25 +65,26 @@
                         <h5 class="card-title mb-0">Gerador de Relatórios</h5>
                     </div>
                     <div class="card-body">
-                        <form>
+                        <form method="POST" action="{% url 'generate_report' %}">
+                            {% csrf_token %}
                             <div class="row mb-3">
                                 <div class="col-md-6">
                                     <label class="form-label">Tipo de Relatório</label>
-                                    <select class="form-select">
+                                    <select class="form-select" name="tipo_relatorio" required>
                                         <option value="">Selecione o tipo de relatório...</option>
-                                        <option>Inventário por Departamento</option>
-                                        <option>Histórico de Manutenções</option>
-                                        <option>Movimentações de Equipamentos</option>
-                                        <option>Análise de Custos</option>
-                                        <option>Performance de Equipamentos</option>
+                                        <option value="inventario">Inventário por Departamento</option>
+                                        <option value="manutencao">Histórico de Manutenções</option>
+                                        <option value="movimentacoes">Movimentações de Equipamentos</option>
+                                        <option value="custos">Análise de Custos</option>
+                                        <option value="performance">Performance de Equipamentos</option>
                                     </select>
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Formato de Saída</label>
-                                    <select class="form-select">
-                                        <option>PDF</option>
-                                        <option>Excel</option>
-                                        <option>CSV</option>
+                                    <select class="form-select" name="formato_saida">
+                                        <option value="pdf">PDF</option>
+                                        <option value="excel">Excel</option>
+                                        <option value="csv">CSV</option>
                                     </select>
                                 </div>
                             </div>
@@ -91,29 +92,29 @@
                             <div class="row mb-3">
                                 <div class="col-md-4">
                                     <label class="form-label">Período</label>
-                                    <select class="form-select">
-                                        <option>Último Mês</option>
-                                        <option>Último Trimestre</option>
-                                        <option>Último Ano</option>
-                                        <option>Personalizado</option>
+                                    <select class="form-select" name="periodo">
+                                        <option value="mes">Último Mês</option>
+                                        <option value="trimestre">Último Trimestre</option>
+                                        <option value="ano">Último Ano</option>
+                                        <option value="personalizado">Personalizado</option>
                                     </select>
                                 </div>
                                 <div class="col-md-4">
                                     <label class="form-label">Departamento</label>
-                                    <select class="form-select">
+                                    <select class="form-select" name="departamento">
                                         <option value="">Todos</option>
-                                        <option>TI</option>
-                                        <option>RH</option>
-                                        <option>Financeiro</option>
+                                        <option value="ti">TI</option>
+                                        <option value="rh">RH</option>
+                                        <option value="financeiro">Financeiro</option>
                                     </select>
                                 </div>
                                 <div class="col-md-4">
                                     <label class="form-label">Categoria de Equipamento</label>
-                                    <select class="form-select">
+                                    <select class="form-select" name="categoria">
                                         <option value="">Todas</option>
-                                        <option>Notebooks</option>
-                                        <option>Impressoras</option>
-                                        <option>Monitores</option>
+                                        <option value="notebooks">Notebooks</option>
+                                        <option value="impressoras">Impressoras</option>
+                                        <option value="monitores">Monitores</option>
                                     </select>
                                 </div>
                             </div>
@@ -147,41 +148,33 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    {% for relatorio in relatorios %}
                                     <tr>
-                                        <td>Inventário_TI_Jan2025</td>
-                                        <td>Inventário por Departamento</td>
-                                        <td>01/02/2025</td>
-                                        <td>João Silva</td>
-                                        <td>PDF</td>
+                                        <td>{{ relatorio.nome }}</td>
+                                        <td>{{ relatorio.tipo }}</td>
+                                        <td>{{ relatorio.data_criacao|date:"d/m/Y" }}</td>
+                                        <td>{{ relatorio.usuario }}</td>
+                                        <td>{{ relatorio.formato }}</td>
                                         <td>
-                                            <button class="btn btn-sm btn-primary me-1">
+                                            <a href="{{ relatorio.url_download }}" class="btn btn-sm btn-primary me-1">
                                                 <i class="fas fa-download"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-danger">
+                                            </a>
+                                            <button class="btn btn-sm btn-danger" onclick="deletarRelatorio({{ relatorio.id }})">
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </td>
                                     </tr>
+                                    {% empty %}
                                     <tr>
-                                        <td>Manutencoes_Q4_2024</td>
-                                        <td>Histórico de Manutenções</td>
-                                        <td>31/01/2025</td>
-                                        <td>Maria Santos</td>
-                                        <td>Excel</td>
-                                        <td>
-                                            <button class="btn btn-sm btn-primary me-1">
-                                                <i class="fas fa-download"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-danger">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </td>
+                                        <td colspan="6" class="text-center">Nenhum relatório recente disponível.</td>
                                     </tr>
+                                    {% endfor %}
                                 </tbody>
                             </table>
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
     </div>

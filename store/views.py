@@ -3,9 +3,16 @@ from .models import RegisterUser, RegisterProduct
 from .forms import RegisterUserForm, LoginForm
 
 def home(request):
+    qt_client = RegisterProduct.objects.count()
+    equipments = RegisterProduct.objects.all()
+
     return render(
         request, 
         'store/home.html',
+        {
+            'qt_client': qt_client,
+            'equipments': equipments,
+        }
     )
 
 def register(request):
@@ -67,7 +74,11 @@ def login(request):
 def reports(request):
     return render(
         request,
-        'store/reports.html',
+        "store/reports.html",
+        {
+            "reports": reports, 
+            "form": form,
+        }
     )
 
 def equipment_registration(request):
